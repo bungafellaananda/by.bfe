@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="byBFÉ — Modern outfit dengan karakter maroon & navy.">
+  <title>byBFÉ — Modern Outfit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="header">
+  <a href="#home" class="logo">by<span>BFÉ</span></a>
+  <nav id="nav">
+    <a href="#home" data-id="Beranda" data-en="Home">Beranda</a>
+    <a href="#collection" data-id="Koleksi" data-en="Collection">Koleksi</a>
+    <a href="#promo" data-id="Promo" data-en="Promo">Promo</a>
+    <a href="#about" data-id="Tentang" data-en="About">Tentang</a>
+    <a href="#contact" data-id="Kontak" data-en="Contact">Kontak</a>
+  </nav>
+  <div class="actions">
+    <button id="searchOpen" aria-label="Search">⌕</button>
+    <button class="lang active" data-lang="id">ID</button><span>/</span><button class="lang" data-lang="en">EN</button>
+    <button id="cartOpen" class="cart" aria-label="Keranjang">🛍<b id="cartCount">0</b></button>
+    <button id="menu" class="menu" aria-label="Menu">☰</button>
+  </div>
+</header>
+
+<div class="search-panel" id="searchPanel">
+  <div class="search-wrap">
+    <input id="searchInput" type="search" placeholder="Cari outfit..." autocomplete="off">
+    <button id="searchClose">×</button>
+  </div>
+  <div id="searchResults"></div>
+</div>
+
+<main>
+<section class="hero" id="home">
+  <div class="hero-copy">
+    <p class="eyebrow">BYBFÉ / MODERN OUTFIT</p>
+    <h1>Wear your<br><em>own story.</em></h1>
+    <p class="lead" data-copy="hero">Temukan outfit modern dengan siluet clean, warna berkarakter, dan detail yang membuat gaya kamu terasa personal.</p>
+    <div class="hero-actions">
+      <a class="btn primary" href="#collection" data-copy="shop">Lihat Koleksi →</a>
+      <a class="text-link" href="#about" data-copy="discover">Kenal byBFÉ</a>
+    </div>
+  </div>
+
+  <div class="slider" aria-label="Featured outfit slider">
+    <div class="slides" id="slides">
+      <article class="slide">
+        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1400&q=85" alt="Modern outfit collection">
+        <div class="caption"><small>01 / 05</small><strong>Daily Muse</strong></div>
+      </article>
+      <article class="slide">
+        <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1400&q=85" alt="Elegant outfit">
+        <div class="caption"><small>02 / 05</small><strong>Soft Statement</strong></div>
+      </article>
+      <article class="slide">
+        <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1400&q=85" alt="Contemporary fashion outfit">
+        <div class="caption"><small>03 / 05</small><strong>City Edit</strong></div>
+      </article>
+      <article class="slide">
+        <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1400&q=85" alt="Statement fashion">
+        <div class="caption"><small>04 / 05</small><strong>After Hours</strong></div>
+      </article>
+      <article class="slide">
+        <img src="https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=1400&q=85" alt="Fashion outfit collection">
+        <div class="caption"><small>05 / 05</small><strong>Signature Edit</strong></div>
+      </article>
+    </div>
+    <div class="dots" id="dots"></div>
+    <button class="arrow prev" id="prev" aria-label="Previous">←</button>
+    <button class="arrow next" id="next" aria-label="Next">→</button>
+  </div>
+</section>
+
+<div class="marquee">
+  <span>NEW COLLECTION</span> ✦ <span>MODERN BY DESIGN</span> ✦ <span>BYBFÉ</span> ✦ <span>NEW COLLECTION</span>
+</div>
+
+<section class="section" id="collection">
+  <div class="section-heading">
+    <div><p class="eyebrow">01 / COLLECTION</p><h2>Find your <em>signature.</em></h2></div>
+    <p data-copy="collection">Koleksi pilihan untuk gaya sehari-hari, acara spesial, dan momen ketika kamu ingin tampil lebih percaya diri.</p>
+  </div>
+
+  <div class="products">
+    <article class="product" data-name="Maroon Elara Set">
+      <div class="product-image">
+        <img src="https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=900&q=85" alt="Maroon Elara Set">
+        <span>BESTSELLER</span><button class="add" data-product="Maroon Elara Set">+ Tambah ke keranjang</button>
+      </div>
+      <div class="product-info"><div><h3>Maroon Elara Set</h3><small>Maroon · Elegant</small></div><b>Rp 489K</b></div>
+    </article>
+
+    <article class="product" data-name="Navy Aira Dress">
+      <div class="product-image">
+        <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=900&q=85" alt="Navy Aira Dress">
+        <button class="add" data-product="Navy Aira Dress">+ Tambah ke keranjang</button>
+      </div>
+      <div class="product-info"><div><h3>Navy Aira Dress</h3><small>Navy · Minimal</small></div><b>Rp 429K</b></div>
+    </article>
+
+    <article class="product" data-name="Ivory Noura Outer">
+      <div class="product-image">
+        <img src="https://images.unsplash.com/photo-1566206091558-7f218b696731?auto=format&fit=crop&w=900&q=85" alt="Ivory Noura Outer">
+        <span>NEW</span><button class="add" data-product="Ivory Noura Outer">+ Tambah ke keranjang</button>
+      </div>
+      <div class="product-info"><div><h3>Ivory Noura Outer</h3><small>Ivory · Clean Cut</small></div><b>Rp 379K</b></div>
+    </article>
+
+    <article class="product" data-name="Mahogany Raya Set">
+      <div class="product-image">
+        <img src="https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?auto=format&fit=crop&w=900&q=85" alt="Mahogany Raya Set">
+        <button class="add" data-product="Mahogany Raya Set">+ Tambah ke keranjang</button>
+      </div>
+      <div class="product-info"><div><h3>Mahogany Raya Set</h3><small>Mahogany · Statement</small></div><b>Rp 459K</b></div>
+    </article>
+  </div>
+</section>
+
+<section class="promo section" id="promo">
+  <div class="promo-box">
+    <div><p class="eyebrow">02 / PROMO</p><h2>First order,<br><em>10% off.</em></h2></div>
+    <div>
+      <p data-copy="promo">Nikmati potongan 10% untuk pembelian pertama dengan kode <strong>BYBFE10</strong>.</p>
+      <a class="btn light" href="#collection">Belanja Sekarang →</a>
+    </div>
+  </div>
+</section>
+
+<section class="about section" id="about">
+  <div class="about-number">03</div>
+  <div>
+    <p class="eyebrow">ABOUT BYBFÉ</p>
+    <h2>Style with<br><em>character.</em></h2>
+    <p class="about-copy" data-copy="about">byBFÉ menghadirkan outfit dengan pendekatan modern, minimalis, dan mudah dipadukan. Kami percaya gaya terbaik adalah gaya yang terasa nyaman dan tetap menunjukkan karakter pemakainya.</p>
+    <div class="values">
+      <div><span>01</span><b>Modern</b><small>Clean silhouettes</small></div>
+      <div><span>02</span><b>Comfort</b><small>Made for everyday</small></div>
+      <div><span>03</span><b>Distinctive</b><small>Made to be remembered</small></div>
+    </div>
+  </div>
+</section>
+
+<section class="newsletter section">
+  <p class="eyebrow">STAY CONNECTED</p>
+  <h2>Style notes, <em>delivered.</em></h2>
+  <p>Daftar untuk mendapatkan koleksi terbaru dan promo byBFÉ.</p>
+  <form id="newsletter"><input type="email" placeholder="Email kamu" required><button>Join →</button></form>
+</section>
+</main>
+
+<footer id="contact">
+  <div class="footer-top">
+    <div><a class="logo white" href="#home">by<span>BFÉ</span></a><p>Modern outfit for your everyday story.</p></div>
+    <div class="footer-links">
+      <div><b>EXPLORE</b><a href="#collection">Collection</a><a href="#promo">Promo</a><a href="#about">About</a></div>
+      <div><b>HELP</b><a href="#contact">Contact</a><a href="#">Shipping</a><a href="#">FAQ</a></div>
+      <div><b>SOCIAL</b><a href="#">Instagram</a><a href="#">TikTok</a><a href="#">WhatsApp</a></div>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 byBFÉ · All rights reserved.</div>
+</footer>
+
+<a class="whatsapp" id="whatsapp" target="_blank" rel="noopener" aria-label="Chat WhatsApp">
+  <span>◉</span><label>Chat WhatsApp</label>
+</a>
+
+<div class="drawer" id="drawer">
+  <div class="overlay" id="overlay"></div>
+  <aside>
+    <div class="drawer-head"><h2>My Cart</h2><button id="cartClose">×</button></div>
+    <div class="cart-items" id="cartItems"><p>Keranjang masih kosong.</p></div>
+    <div class="cart-bottom"><div>Total item <b id="total">0</b></div><a class="btn primary full" id="checkout" target="_blank">Order via WhatsApp →</a></div>
+  </aside>
+</div>
+
+<div id="toast"></div>
+<script src="script.js"></script>
+</body>
+</html>
