@@ -88,39 +88,8 @@
     <p data-copy="collection">Koleksi pilihan untuk gaya sehari-hari, acara spesial, dan momen ketika kamu ingin tampil lebih percaya diri.</p>
   </div>
 
-  <div class="products">
-    <article class="product" data-name="Maroon Elara Set">
-      <div class="product-image">
-        <img src="https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=900&q=85" alt="Maroon Elara Set">
-        <span>BESTSELLER</span><button class="add" data-product="Maroon Elara Set">+ Tambah ke keranjang</button>
-      </div>
-      <div class="product-info"><div><h3>Maroon Elara Set</h3><small>Maroon · Elegant</small></div><b>Rp 489K</b></div>
-    </article>
-
-    <article class="product" data-name="Navy Aira Dress">
-      <div class="product-image">
-        <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=900&q=85" alt="Navy Aira Dress">
-        <button class="add" data-product="Navy Aira Dress">+ Tambah ke keranjang</button>
-      </div>
-      <div class="product-info"><div><h3>Navy Aira Dress</h3><small>Navy · Minimal</small></div><b>Rp 429K</b></div>
-    </article>
-
-    <article class="product" data-name="Ivory Noura Outer">
-      <div class="product-image">
-        <img src="https://images.unsplash.com/photo-1566206091558-7f218b696731?auto=format&fit=crop&w=900&q=85" alt="Ivory Noura Outer">
-        <span>NEW</span><button class="add" data-product="Ivory Noura Outer">+ Tambah ke keranjang</button>
-      </div>
-      <div class="product-info"><div><h3>Ivory Noura Outer</h3><small>Ivory · Clean Cut</small></div><b>Rp 379K</b></div>
-    </article>
-
-    <article class="product" data-name="Mahogany Raya Set">
-      <div class="product-image">
-        <img src="https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?auto=format&fit=crop&w=900&q=85" alt="Mahogany Raya Set">
-        <button class="add" data-product="Mahogany Raya Set">+ Tambah ke keranjang</button>
-      </div>
-      <div class="product-info"><div><h3>Mahogany Raya Set</h3><small>Mahogany · Statement</small></div><b>Rp 459K</b></div>
-    </article>
-  </div>
+  <div id="productsLoading" class="products-loading">Memuat koleksi…</div>
+  <div class="products" id="productsGrid"></div>
 </section>
 
 <section class="promo section" id="promo">
@@ -151,7 +120,10 @@
   <p class="eyebrow">STAY CONNECTED</p>
   <h2>Style notes, <em>delivered.</em></h2>
   <p>Daftar untuk mendapatkan koleksi terbaru dan promo byBFÉ.</p>
-  <form id="newsletter"><input type="email" placeholder="Email kamu" required><button>Join →</button></form>
+  <form id="newsletter">
+    <input type="email" id="newsletterEmail" placeholder="Email kamu" required>
+    <button type="submit">Join →</button>
+  </form>
 </section>
 </main>
 
@@ -161,7 +133,7 @@
     <div class="footer-links">
       <div><b>EXPLORE</b><a href="#collection">Collection</a><a href="#promo">Promo</a><a href="#about">About</a></div>
       <div><b>HELP</b><a href="#contact">Contact</a><a href="#">Shipping</a><a href="#">FAQ</a></div>
-      <div><b>SOCIAL</b><a href="#">Instagram</a><a href="#">TikTok</a><a href="#">WhatsApp</a></div>
+      <div><b>SOCIAL</b><a href="#">Instagram</a><a href="#">TikTok</a><a href="#" id="footerWa">WhatsApp</a></div>
     </div>
   </div>
   <div class="footer-bottom">© 2026 byBFÉ · All rights reserved.</div>
@@ -171,13 +143,44 @@
   <span>◉</span><label>Chat WhatsApp</label>
 </a>
 
+<!-- Cart Drawer -->
 <div class="drawer" id="drawer">
   <div class="overlay" id="overlay"></div>
   <aside>
     <div class="drawer-head"><h2>My Cart</h2><button id="cartClose">×</button></div>
     <div class="cart-items" id="cartItems"><p>Keranjang masih kosong.</p></div>
-    <div class="cart-bottom"><div>Total item <b id="total">0</b></div><a class="btn primary full" id="checkout" target="_blank">Order via WhatsApp →</a></div>
+    <div class="cart-promo">
+      <input type="text" id="promoInput" placeholder="Kode promo" maxlength="20">
+      <button type="button" id="promoApply">Apply</button>
+    </div>
+    <div class="cart-summary" id="cartSummary" style="display:none">
+      <div class="sum-row"><span>Subtotal</span><b id="subtotalText">Rp 0</b></div>
+      <div class="sum-row discount-row" id="discountRow" style="display:none"><span>Diskon</span><b id="discountText">- Rp 0</b></div>
+      <div class="sum-row total-row"><span>Total</span><b id="totalText">Rp 0</b></div>
+    </div>
+    <div class="cart-bottom">
+      <div>Total item <b id="total">0</b></div>
+      <button class="btn primary full" id="checkoutBtn">Order via WhatsApp →</button>
+    </div>
   </aside>
+</div>
+
+<!-- Checkout Modal (nama + nomor) -->
+<div class="modal" id="checkoutModal">
+  <div class="modal-box">
+    <h3>Data Pemesan</h3>
+    <p class="modal-hint">Isi biar order masuk ke database kami (opsional tapi disarankan).</p>
+    <label>Nama</label>
+    <input type="text" id="customerName" placeholder="Nama kamu">
+    <label>No. WhatsApp</label>
+    <input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx">
+    <label>Catatan (opsional)</label>
+    <input type="text" id="customerNote" placeholder="Ukuran, warna, dll">
+    <div class="modal-actions">
+      <button type="button" class="btn light" id="modalCancel">Batal</button>
+      <button type="button" class="btn primary" id="modalConfirm">Lanjut ke WhatsApp →</button>
+    </div>
+  </div>
 </div>
 
 <div id="toast"></div>
