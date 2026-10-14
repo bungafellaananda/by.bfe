@@ -3,7 +3,7 @@
 // ========================================
 
 // >>> GANTI URL INI setelah deploy Apps Script Web App <<<
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/PASTE_YOUR_DEPLOYMENT_ID/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/library/d/1522iJXECwrfWc14TdD7AKC_NyB0LJFzOKE2OJLkMjDFIttusNBQDION5/1";
 
 // Nomor WhatsApp
 const WA_NUMBER = "6282269190930";
