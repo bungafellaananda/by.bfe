@@ -1,168 +1,173 @@
-/**
- * byBFÉ — Google Apps Script Backend
- * ==================================
- * Deploy as Web App:
- *   Execute as: Me
- *   Who has access: Anyone
- *
- * Spreadsheet must have 4 sheets: Products, Orders, Subscribers, Promo
- * (lihat SETUP.md untuk struktur kolom)
- */
+// ============================================================
+// byBFÉ Apps Script Backend
+// Copy seluruh isi file ini ke Google Apps Script editor
+// ============================================================
 
-const SPREADSHEET_ID = 'PASTE_YOUR_SPREADSHEET_ID_HERE'; // ganti setelah buat Sheet
+const props = PropertiesService.getScriptProperties();
+const SPREADSHEET_ID = props.getProperty('SPREADSHEET_ID');
 
 function doGet(e) {
-  const action = (e.parameter.action || '').toLowerCase();
-  const output = ContentService.createTextOutput();
-  output.setMimeType(ContentService.MimeType.JSON);
-
+  const action = e.parameter.action || 'products';
   try {
     if (action === 'products') {
-      return output.setContent(JSON.stringify(getProducts()));
+      return jsonResponse(getProducts());
     }
-    if (action === 'promo') {
-      const code = (e.parameter.code || '').toUpperCase().trim();
-      return output.setContent(JSON.stringify(checkPromo(code)));
+    if (action === 'validatePromo') {
+      return jsonResponse(validatePromo(e.parameter.code));
     }
-    return output.setContent(JSON.stringify({ ok: false, error: 'Unknown action' }));
+    return jsonResponse({ error: 'Unknown action' });
   } catch (err) {
-    return output.setContent(JSON.stringify({ ok: false, error: String(err) }));
+    return jsonResponse({ error: err.toString() });
   }
 }
 
 function doPost(e) {
-  const output = ContentService.createTextOutput();
-  output.setMimeType(ContentService.MimeType.JSON);
-
   try {
-    const data = JSON.parse(e.postData.contents || '{}');
-    const action = (data.action || '').toLowerCase();
-
-    if (action === 'subscribe') {
-      return output.setContent(JSON.stringify(addSubscriber(data.email)));
+    const data = JSON.parse(e.postData.contents);
+    if (data.action === 'newsletter') {
+      return jsonResponse(addNewsletter(data.email));
     }
-    if (action === 'order') {
-      return output.setContent(JSON.stringify(addOrder(data)));
+    if (data.action === 'order') {
+      return jsonResponse(addOrder(data));
     }
-    return output.setContent(JSON.stringify({ ok: false, error: 'Unknown action' }));
+    return jsonResponse({ error: 'Unknown action' });
   } catch (err) {
-    return output.setContent(JSON.stringify({ ok: false, error: String(err) }));
+    return jsonResponse({ error: err.toString() });
   }
 }
-
-/* ---------- Helpers ---------- */
-
-function getSheet(name) {
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = ss.getSheetByName(name);
-  if (!sheet) throw new Error('Sheet not found: ' + name);
-  return sheet;
-}
-
-function sheetToObjects(sheet) {
-  const values = sheet.getDataRange().getValues();
-  if (values.length < 2) return [];
-  const headers = values[0].map(h => String(h).trim().toLowerCase());
-  return values.slice(1).map(row => {
-    const obj = {};
-    headers.forEach((h, i) => { obj[h] = row[i]; });
-    return obj;
-  });
-}
-
-/* ---------- Products ---------- */
 
 function getProducts() {
-  const rows = sheetToObjects(getSheet('Products'));
-  const products = rows
-    .filter(r => String(r.active).toUpperCase() === 'TRUE' || r.active === true)
-    .map(r => ({
-      id: String(r.id || ''),
-      name: String(r.name || ''),
-      price: Number(r.price) || 0,
-      category: String(r.category || ''),
-      color: String(r.color || ''),
-      tag: String(r.tag || ''),
-      image: String(r.image_url || r.image || ''),
-      stock: Number(r.stock) || 0,
-      description: String(r.description || '')
-    }));
-  return { ok: true, products };
+  const cache = CacheService.getScriptCache();
+  const cached = cache.get('products_v1');
+  if (cached) return JSON.parse(cached);
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName('Products');
+  if (!sheet) throw new Error('Sheet Products tidak ditemukan');
+
+  const data = sheet.getDataRange().getValues();
+  if (data.length < 2) return [];
+
+  const headers = data[0].map(h => String(h).trim());
+  const products = data.slice(1)
+    .filter(row => {
+      const activeIdx = headers.indexOf('active');
+      if (activeIdx === -1) return true;
+      const val = row[activeIdx];
+      return val === true || val === 'TRUE' || val === 'true' || val === 1;
+    })
+    .map(row => {
+      const obj = {};
+      headers.forEach((h, i) => {
+        obj[h] = row[i];
+      });
+      return obj;
+    });
+
+  cache.put('products_v1', JSON.stringify(products), 300); // cache 5 menit
+  return products;
 }
 
-/* ---------- Promo ---------- */
-
-function checkPromo(code) {
-  if (!code) return { ok: false, valid: false, error: 'Kode kosong' };
-  const rows = sheetToObjects(getSheet('Promo'));
-  const found = rows.find(r => String(r.code).toUpperCase() === code);
-  if (!found) return { ok: true, valid: false, error: 'Kode tidak ditemukan' };
-
-  const active = String(found.active).toUpperCase() === 'TRUE' || found.active === true;
-  if (!active) return { ok: true, valid: false, error: 'Kode tidak aktif' };
-
-  if (found.expiry) {
-    const exp = new Date(found.expiry);
-    if (exp < new Date()) return { ok: true, valid: false, error: 'Kode sudah kadaluarsa' };
+function addNewsletter(email) {
+  if (!email || !String(email).includes('@')) {
+    return { success: false, message: 'Email tidak valid' };
   }
-
-  return {
-    ok: true,
-    valid: true,
-    code: String(found.code).toUpperCase(),
-    discount_percent: Number(found.discount_percent) || 0,
-    min_order: Number(found.min_order) || 0
-  };
-}
-
-/* ---------- Subscribers ---------- */
-
-function addSubscriber(email) {
-  email = String(email || '').trim().toLowerCase();
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return { ok: false, error: 'Email tidak valid' };
-  }
-
-  const sheet = getSheet('Subscribers');
-  const existing = sheetToObjects(sheet).map(r => String(r.email).toLowerCase());
-  if (existing.includes(email)) {
-    return { ok: true, message: 'Email sudah terdaftar' };
-  }
-
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName('Newsletter');
+  if (!sheet) throw new Error('Sheet Newsletter tidak ditemukan');
   sheet.appendRow([new Date(), email, 'website']);
-  return { ok: true, message: 'Berhasil berlangganan' };
+  return { success: true, message: 'Terima kasih, kamu sudah terdaftar!' };
 }
-
-/* ---------- Orders ---------- */
 
 function addOrder(data) {
-  const products = data.products || [];
-  if (!Array.isArray(products) || products.length === 0) {
-    return { ok: false, error: 'Keranjang kosong' };
-  }
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName('Orders');
+  if (!sheet) throw new Error('Sheet Orders tidak ditemukan');
 
-  const orderId = 'BF' + Utilities.formatDate(new Date(), 'Asia/Jakarta', 'yyMMddHHmmss');
-  const qtyTotal = products.reduce((s, p) => s + (Number(p.qty) || 1), 0);
-  const subtotal = products.reduce((s, p) => s + (Number(p.price) || 0) * (Number(p.qty) || 1), 0);
-  const discount = Number(data.discount) || 0;
-  const total = Math.max(0, subtotal - discount);
-
-  const productsStr = products.map(p => `${p.name} x${p.qty || 1}`).join(', ');
-
-  getSheet('Orders').appendRow([
+  sheet.appendRow([
     new Date(),
-    orderId,
-    productsStr,
-    qtyTotal,
-    subtotal,
-    discount,
-    total,
-    String(data.customer_name || ''),
-    String(data.customer_phone || ''),
-    String(data.note || ''),
-    String(data.promo_code || ''),
-    'Pending'
+    data.name || '',
+    data.email || '',
+    data.phone || '',
+    JSON.stringify(data.items || []),
+    data.total || 0,
+    data.promoCode || '',
+    data.note || '',
+    'pending'
   ]);
 
-  return { ok: true, order_id: orderId, total: total };
+  // Opsional: kirim email notifikasi
+  // MailApp.sendEmail('email-kamu@gmail.com', 'Pesanan Baru byBFÉ', JSON.stringify(data, null, 2));
+
+  return { success: true, message: 'Pesanan diterima! Kami akan menghubungi kamu segera.' };
+}
+
+function validatePromo(code) {
+  if (!code) return { valid: false };
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName('Promos');
+  if (!sheet) return { valid: false };
+
+  const data = sheet.getDataRange().getValues();
+  if (data.length < 2) return { valid: false };
+
+  const headers = data[0].map(h => String(h).trim());
+  const codeIdx = headers.indexOf('code');
+  const activeIdx = headers.indexOf('active');
+  const discIdx = headers.indexOf('discountPercent');
+
+  if (codeIdx === -1) return { valid: false };
+
+  for (let i = 1; i < data.length; i++) {
+    const rowCode = String(data[i][codeIdx] || '').toUpperCase();
+    const isActive = activeIdx === -1 ? true : (data[i][activeIdx] === true || data[i][activeIdx] === 'TRUE' || data[i][activeIdx] === 'true');
+    if (rowCode === String(code).toUpperCase() && isActive) {
+      return {
+        valid: true,
+        discountPercent: discIdx >= 0 ? Number(data[i][discIdx]) || 10 : 10
+      };
+    }
+  }
+  return { valid: false };
+}
+
+function jsonResponse(obj) {
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+// ============================================================
+// SETUP AWAL (jalankan sekali jika perlu)
+// ============================================================
+function setupSheets() {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  
+  // Products
+  let sheet = ss.getSheetByName('Products') || ss.insertSheet('Products');
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(['id', 'collection', 'name', 'price', 'imageUrl', 'description', 'stock', 'active']);
+    sheet.appendRow(['daily-muse-01', 'Daily Muse', 'Clean Daily Shirt', 289000, '', 'Outfit harian minimalis', 10, true]);
+  }
+
+  // Newsletter
+  sheet = ss.getSheetByName('Newsletter') || ss.insertSheet('Newsletter');
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(['timestamp', 'email', 'source']);
+  }
+
+  // Orders
+  sheet = ss.getSheetByName('Orders') || ss.insertSheet('Orders');
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(['timestamp', 'name', 'email', 'phone', 'items', 'total', 'promoCode', 'note', 'status']);
+  }
+
+  // Promos
+  sheet = ss.getSheetByName('Promos') || ss.insertSheet('Promos');
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(['code', 'discountPercent', 'active', 'maxUses']);
+    sheet.appendRow(['BYBFE10', 10, true, 100]);
+  }
+
+  Logger.log('Setup selesai. Isi data produk di sheet Products.');
 }

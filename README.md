@@ -1,37 +1,29 @@
-# byBFÉ — Modern Outfit Website
+# byBFÉ — Modern Outfit (GitHub Pages + Google Sheets)
 
-Website fashion brand byBFÉ dengan database gratis via **Google Sheets + Apps Script**.
+Package siap deploy untuk situs fashion byBFÉ dengan backend Google Sheets + Apps Script.
 
-## Fitur
+## Isi Package
 
-- Katalog produk dinamis (dari Google Sheet)
-- Keranjang + qty + stok
-- Kode promo (validasi dari Sheet)
-- Checkout via WhatsApp + simpan order ke Sheet
-- Newsletter → tersimpan di Sheet
-- Bilingual ID / EN
-- Responsive + slider + search
+```
+bybfe-deploy/
+├── index.html          # Halaman utama
+├── styles.css          # Styling modern
+├── script.js           # Logika frontend + API call
+├── appscript/
+│   └── Code.gs         # Kode Apps Script (copy-paste ke editor)
+└── README.md           # Panduan lengkap
+```
 
-## Cara Setup
+## Cara Deploy
 
-Baca file **SETUP.md** (langkah demi langkah).
+### 1. Frontend (GitHub Pages)
+1. Unzip folder ini.
+2. Upload `index.html`, `styles.css`, `script.js` ke repository GitHub Pages kamu.
+3. Setelah Apps Script selesai, ganti `API_URL` di `script.js`.
 
-Singkatnya:
-1. Buat Google Spreadsheet (4 sheet: Products, Orders, Subscribers, Promo)
-2. Deploy Apps Script sebagai Web App
-3. Paste URL Web App ke `script.js` → `APPS_SCRIPT_URL`
-4. Upload ke GitHub Pages
+### 2. Backend (Google Sheets + Apps Script)
+Ikuti panduan di `README.md` dan file `appscript/Code.gs`.
 
-## File penting
+---
 
-| File | Keterangan |
-|------|------------|
-| `index.html` | Halaman utama |
-| `script.js` | Logic + koneksi ke Apps Script |
-| `style.css` | Styling |
-| `apps-script/Code.gs` | Backend (copy ke Google Apps Script) |
-| `SETUP.md` | Panduan setup lengkap |
-
-## Domain
-
-CNAME sudah diset ke `by.bybfe.my.id`
+**Catatan**: Tidak ada secret di frontend. Spreadsheet ID disimpan di Script Properties.
