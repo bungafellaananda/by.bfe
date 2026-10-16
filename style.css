@@ -182,11 +182,14 @@ nav a:hover {
 /* ================= HERO ================= */
 
 .hero {
-  min-height: calc(100vh - 80px);
+  min-height: auto;
   display: grid;
-  grid-template-columns: 43% 57%;
+  grid-template-columns: 1fr 1fr;
   background: var(--cream);
+  overflow: hidden;
 }
+
+
 
 .hero-copy {
   padding: 10vh 7vw 8vh 11vw;
