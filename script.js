@@ -1,7 +1,7 @@
 // ============================================
 // CONFIG — GANTI URL SETELAH DEPLOY APPS SCRIPT
 // ============================================
-const API_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
+const API_URL = https://script.google.com/macros/s/AKfycby1NJgiGHFNWloGnYKgfzywJtcGdW25dtFefXkVhcmTxtj6HJEsa0JG5VupjPGo4bIh/exec
 
 // ============================================
 // STATE
