@@ -182,12 +182,16 @@ nav a:hover {
 /* ================= HERO ================= */
 
 .hero {
-  min-height: auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
+  padding: 60px 7vw;
   background: var(--cream);
   overflow: hidden;
 }
+
 
 
 
